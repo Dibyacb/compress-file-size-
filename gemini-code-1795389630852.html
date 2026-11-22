@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compress Your Files — by Priyanto</title>
+<style>
+:root{
+  --bg:#faf6f1;
+  --card:#ffffff;
+  --card2:#fdfaf6;
+  --ink:#2b1d12;
+  --mut:#7b6655;
+  --ac:#d96b27;
+  --ac2:#ea7f3b;
+  --ac-dark:#b85315;
+  --soft:#f8eae0;
+  --soft2:#fcf5ef;
+  --line:#ead7c7;
+  --ok:#15803d;
+  --ok-bg:#dcfce7;
+  --warn:#b45309;
+  --warn-ac:#d97706;
+  --warn-bg:#fef3c7;
+  --err:#b91c1c;
+  --err-bg:#fee2e2;
+  --shadow:0 12px 32px rgba(43,29,18,.06);
+}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 0%,#f4e1d0 0%,transparent 42%),
+    radial-gradient(circle at 90% 100%,#f6e6d6 0%,transparent 42%),
+    var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:28px 16px 48px;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Crisp SVG Icons */
+.ico{
+  width:18px;height:18px;stroke:currentColor;fill:none;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+  flex-shrink:0;display:inline-block;vertical-align:middle;
+}
+.ico-lg{width:32px;height:32px;stroke-width:1.65}
+.ico-md{width:22px;height:22px;stroke-width:1.8}
+
+/* Stepper */
+.steps{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
+.st{
+  font-size:13px;font-weight:600;padding:7px 16px;border-radius:99px;
+  background:var(--card);border:1px solid var(--line);color:var(--mut);
+  transition:.2s;user-select:none;display:inline-flex;align-items:center;gap:8px;
+}
+.st-num{
+  width:20px;height:20px;border-radius:50%;font-size:11.5px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--soft);color:var(--mut);
+}
+.st.on{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 4px 12px rgba(217,107,39,.24)}
+.st.on .st-num{background:rgba(255,255,255,.22);color:#fff}
+.st.done{cursor:pointer;border-color:var(--ac2);color:var(--ac-dark)}
+.st.done:hover{background:var(--soft2)}
+
+/* Views */
+.view{display:none;width:100%;max-width:650px;animation:fadeUp .35s ease}
+.view.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Hero / Page 1 */
+.brand-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--soft);color:var(--ac-dark);
+  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:5px 14px;border-radius:99px;margin:0 auto 14px;border:1px solid var(--line);
+}
+.center{text-align:center}
+h1{font-size:clamp(30px,6vw,42px);text-align:center;line-height:1.14;letter-spacing:-.025em;font-weight:800}
+h1 small{display:block;font-size:.42em;font-weight:700;color:var(--ac);margin-top:8px;letter-spacing:.01em}
+.sub{text-align:center;color:var(--mut);margin:12px auto 26px;font-size:15px;line-height:1.55;max-width:520px}
+
+.drop{
+  display:block;border:2px dashed var(--ac2);background:var(--card);
+  border-radius:20px;padding:46px 24px;text-align:center;cursor:pointer;
+  transition:.22s;box-shadow:var(--shadow);
+}
+.drop:hover,.drop.over{background:var(--soft2);border-color:var(--ac);transform:translateY(-2px)}
+.drop-icon{
+  width:58px;height:58px;border-radius:16px;background:var(--soft);color:var(--ac);
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.drop b{display:block;font-size:18px;margin-bottom:5px;font-weight:700}
+.drop span{color:var(--mut);font-size:14px}
+.formats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.formats span{
+  font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:7px;
+  background:var(--soft2);color:var(--mut);border:1px solid var(--line);letter-spacing:.02em;
+}
+.resume-pill{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  background:var(--card);border:1px solid var(--ac2);color:var(--ac-dark);
+  padding:9px 18px;border-radius:99px;font-size:13.5px;font-weight:600;
+  cursor:pointer;box-shadow:0 4px 14px rgba(217,107,39,.1);transition:.2s;
+}
+.resume-pill:hover{background:var(--soft2)}
+.foot{
+  text-align:center;color:var(--mut);font-size:13px;margin-top:22px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+/* Buttons */
+.btn{
+  background:var(--ac);color:#fff;border:1px solid var(--ac);
+  padding:12px 22px;border-radius:12px;font-size:14.5px;font-weight:600;
+  cursor:pointer;box-shadow:0 4px 14px rgba(217,107,39,.22);transition:.18s;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn:hover{background:var(--ac-dark);border-color:var(--ac-dark);transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn:disabled{opacity:.48;pointer-events:none}
+
+.ghost{
+  background:var(--card);color:var(--ink);border:1px solid var(--line);
+  padding:11px 18px;border-radius:12px;font-size:14px;font-weight:600;
+  cursor:pointer;transition:.18s;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+}
+.ghost:hover{background:var(--soft2);border-color:var(--ac2)}
+
+/* File List / Page 2 */
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.head h2{font-size:21px;font-weight:700}
+#banner{
+  font-size:13px;font-weight:600;margin-bottom:12px;color:var(--mut);
+  background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:12px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;
+}
+.item{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+  margin-bottom:10px;animation:fadeUp .28s ease;box-shadow:0 2px 8px rgba(43,29,18,.03);
+}
+.f-tag{
+  width:42px;height:42px;border-radius:11px;background:var(--soft);color:var(--ac-dark);
+  font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--line);
+}
+.item .nm{flex:1;min-width:0}
+.item .nm b{display:block;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .nm .meta{font-size:12.5px;color:var(--mut);display:block;margin-top:2px}
+.m{display:block;font-style:normal;font-size:12px;margin-top:3px}
+.m.err{color:var(--err);font-weight:600}
+.m.warn{color:var(--warn);font-weight:500}
+.m.ok{color:var(--ok);font-weight:500}
+.item.err{border-color:#fca5a5;background:#fff8f8}
+.item.warn{border-color:#fcd34d}
+.x{
+  background:var(--soft2);border:1px solid var(--line);width:32px;height:32px;
+  border-radius:9px;cursor:pointer;color:var(--mut);flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;transition:.15s;
+}
+.x:hover{background:var(--err-bg);color:var(--err);border-color:#fca5a5}
+.bar{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.bar .btn{flex:1;min-width:170px}
+
+/* Modal / Smooth Popup */
+.overlay{
+  position:fixed;inset:0;background:rgba(43,29,18,.46);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:14px;
+  opacity:0;pointer-events:none;transition:opacity .26s ease;z-index:20;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+.box{
+  background:var(--card2);border:1px solid var(--line);border-radius:22px;
+  padding:22px;width:100%;max-width:485px;max-height:92vh;overflow-y:auto;
+  transform:translateY(22px) scale(.96);
+  transition:transform .34s cubic-bezier(.2,.9,.3,1.1);
+  box-shadow:0 28px 60px rgba(43,29,18,.24);
+}
+.overlay.open .box{transform:none}
+.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-top h2{font-size:18px;font-weight:700}
+.back-mini{
+  background:var(--card);border:1px solid var(--line);color:var(--ink);
+  padding:6px 12px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:.15s;
+}
+.back-mini:hover{background:var(--soft2);border-color:var(--ac2)}
+
+/* 2 Main Option Cards */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{
+  background:var(--card);border:1.5px solid var(--line);border-radius:16px;
+  padding:15px 12px;text-align:center;cursor:pointer;transition:.2s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.opt:hover{border-color:var(--ac2);background:var(--soft2)}
+.opt-icon{
+  width:40px;height:40px;border-radius:11px;background:var(--soft);color:var(--ac-dark);
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.opt b{display:block;font-size:14.5px;font-weight:700}
+.opt span{font-size:12px;color:var(--mut);display:block}
+.opt.sel{border-color:var(--ac);background:var(--soft2);box-shadow:0 4px 14px rgba(217,107,39,.12)}
+.opt.sel .opt-icon{background:var(--ac);color:#fff}
+.opt.dis{opacity:.42;pointer-events:none}
+
+.panel{margin-top:16px;animation:fadeUp .24s ease}
+.panel label{font-size:11.5px;font-weight:700;color:var(--mut);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+
+/* Range & Clarity Card */
+.range-card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:13px 14px;margin-bottom:14px;font-size:13px;transition:.2s;
+}
+.range-card.blur-zone{border-color:#f59e0b;background:#fffbeb}
+.range-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.range-top b{color:var(--ink);font-weight:600}
+.clarity-pill{
+  font-weight:700;font-size:11.5px;padding:3px 10px;border-radius:99px;
+  background:var(--ok-bg);color:var(--ok);transition:.2s;
+}
+.clarity-pill.mid{background:var(--soft);color:var(--ac-dark)}
+.clarity-pill.blur{background:var(--warn-bg);color:var(--warn)}
+
+.slider-wrap{position:relative;padding:4px 0}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:7px;
+  background:var(--soft);border-radius:99px;outline:none;border:0;padding:0;margin:4px 0;
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--ac);cursor:pointer;border:3px solid #fff;
+  box-shadow:0 2px 8px rgba(217,107,39,.45);transition:background .2s,transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.08)}
+.range-card.blur-zone input[type=range]::-webkit-slider-thumb{
+  background:var(--warn-ac);box-shadow:0 2px 8px rgba(217,119,6,.45);
+}
+.range-scale{
+  display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:4px;
+}
+.range-scale span strong{color:var(--ink);font-weight:600}
+
+.row{display:flex;gap:8px;align-items:center}
+input[type=number],select{
+  flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--line);
+  border-radius:11px;font-size:14.5px;font-weight:600;background:var(--card);
+  color:var(--ink);outline:none;transition:.18s;
+}
+input[type=number]:focus,select:focus{border-color:var(--ac)}
+select{flex:0 0 88px;cursor:pointer}
+
+.seg{display:flex;background:var(--soft);border-radius:11px;padding:3px;gap:3px}
+.seg b{
+  flex:1;text-align:center;padding:8px 10px;border-radius:8px;font-size:13px;
+  cursor:pointer;color:var(--mut);font-weight:700;transition:.18s;white-space:nowrap;
+}
+.seg b.on{background:var(--card);color:var(--ac);box-shadow:0 2px 6px rgba(0,0,0,.07)}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{
+  background:var(--card);border:1px solid var(--line);padding:6px 11px;
+  border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;
+}
+.chip:hover{background:var(--soft2);border-color:var(--ac2)}
+.chip.blur-chip{border-style:dashed;color:var(--warn)}
+
+/* Multi-File Presets */
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.preset{
+  background:var(--card);border:1.5px solid var(--line);border-radius:13px;
+  padding:12px 8px;text-align:center;cursor:pointer;transition:.18s;
+}
+.preset:hover{border-color:var(--ac2);background:var(--soft2)}
+.preset.sel{border-color:var(--ac);background:var(--soft2);box-shadow:0 4px 12px rgba(217,107,39,.12)}
+.preset b{display:block;font-size:14px;font-weight:700;color:var(--ink)}
+.preset.sel b{color:var(--ac-dark)}
+.preset span{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
+
+.batch-preview{
+  margin-top:10px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:9px 12px;max-height:126px;overflow-y:auto;font-size:12px;
+}
+.bp-row{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.bp-row:last-child{border-bottom:0}
+.bp-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.bp-size{white-space:nowrap;font-weight:700;color:var(--ok)}
+
+.chk-row{
+  display:flex;align-items:center;gap:9px;margin-top:12px;
+  font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;user-select:none;
+}
+.chk-row input{accent-color:var(--ac);width:16px;height:16px;cursor:pointer}
+
+/* Resize Enhancements */
+.dim-grid{display:grid;grid-template-columns:1fr auto 1fr 84px;gap:7px;align-items:center}
+.dim-field{position:relative}
+.dim-field span{
+  position:absolute;top:-7px;left:10px;background:var(--card);padding:0 4px;
+  font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;
+}
+.link-btn{
+  background:var(--card);border:1.5px solid var(--line);border-radius:11px;
+  width:38px;height:40px;cursor:pointer;color:var(--mut);transition:.18s;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.link-btn.on{background:var(--soft);border-color:var(--ac);color:var(--ac-dark)}
+.out-dim-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;margin-top:10px;font-size:12.5px;color:var(--mut);
+}
+.out-dim-bar strong{color:var(--ink);font-weight:700}
+
+.hint{
+  display:block;margin-top:14px;color:var(--mut);font-size:12.5px;
+  line-height:1.45;background:var(--soft2);border:1px solid var(--line);
+  padding:10px 12px;border-radius:11px;
+}
+.act{display:flex;gap:10px;margin-top:18px}
+.act .btn{flex:1}
+
+/* Smooth Threshold Warning Popup */
+.warn-overlay{
+  position:fixed;inset:0;background:rgba(43,29,18,.52);backdrop-filter:blur(5px);
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  opacity:0;pointer-events:none;transition:opacity .24s ease;z-index:40;
+}
+.warn-overlay.open{opacity:1;pointer-events:auto}
+.warn-card{
+  background:var(--card);border:1.5px solid #f59e0b;border-radius:20px;
+  padding:24px;width:100%;max-width:410px;text-align:center;
+  transform:translateY(18px) scale(.94);
+  transition:transform .32s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 24px 54px rgba(43,29,18,.28);
+}
+.warn-overlay.open .warn-card{transform:none}
+.warn-badge-icon{
+  width:48px;height:48px;border-radius:14px;background:var(--warn-bg);color:var(--warn-ac);
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.warn-card h3{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.warn-card p{font-size:13.5px;color:var(--mut);line-height:1.5;margin-bottom:16px}
+.warn-compare{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;
+  background:var(--soft2);border:1px solid var(--line);border-radius:12px;padding:10px;
+}
+.wc-col span{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700}
+.wc-col strong{display:block;font-size:15px;margin-top:2px}
+.wc-col.bad strong{color:var(--warn)}
+.wc-col.good strong{color:var(--ok)}
+.warn-actions{display:flex;flex-direction:column;gap:8px}
+.warn-actions .btn,.warn-actions .ghost{width:100%}
+
+/* Page 3 / Results */
+.ov{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:12px 0 18px}
+.ov div{height:100%;width:0;background:var(--ac);transition:.35s}
+.sum{
+  text-align:center;color:var(--ok);background:var(--ok-bg);
+  font-weight:700;font-size:14px;padding:11px 14px;border-radius:12px;
+  margin-bottom:14px;border:1px solid #bbf7d0;
+}
+.res .item.work{border-color:var(--ac2)}
+.sp{
+  width:20px;height:20px;border:2.5px solid var(--soft);
+  border-top-color:var(--ac);border-radius:50%;animation:spin .85s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.badge{
+  background:var(--ok-bg);color:var(--ok);font-size:12px;font-weight:700;
+  padding:4px 10px;border-radius:99px;white-space:nowrap;
+}
+.badge.n{background:var(--soft);color:var(--mut)}
+.act-btns{display:flex;gap:6px;align-items:center}
+.dl{
+  background:var(--ac);color:#fff;border:0;border-radius:10px;
+  padding:8px 13px;cursor:pointer;font-size:13px;font-weight:600;
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.15s;
+}
+.dl:hover{background:var(--ac-dark)}
+.pv-btn{
+  background:var(--card);color:var(--ink);border:1px solid var(--line);
+  border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-weight:600;
+  display:inline-flex;align-items:center;gap:4px;transition:.15s;
+}
+.pv-btn:hover{background:var(--soft2);border-color:var(--ac2)}
+.note{color:var(--warn)!important}
+
+/* Preview Modal */
+.pv-box{max-width:560px;text-align:center}
+.pv-img{
+  max-width:100%;max-height:58vh;border-radius:12px;border:1px solid var(--line);
+  background:repeating-conic-gradient(#f2ebe4 0% 25%,#fff 0% 50%) 50%/16px 16px;
+  margin:10px 0;
+}
+.pv-meta{font-size:13px;color:var(--mut);margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="steps" id="stepper">
+  <div class="st on" data-s="1"><span class="st-num">1</span> Upload</div>
+  <div class="st" data-s="2"><span class="st-num">2</span> Options</div>
+  <div class="st" data-s="3"><span class="st-num">3</span> Download</div>
+</div>
+
+<!-- PAGE 1: UPLOAD -->
+<section class="view on" id="v1">
+  <div class="center"><span class="brand-pill">Local Browser Compression</span></div>
+  <h1>Compress Your Files<small>by Priyanto</small></h1>
+  <p class="sub">Reduce the file size of PDFs, PowerPoint presentations, Word documents, and images to your exact target — or resize photo dimensions accurately.</p>
+
+  <label class="drop" id="drop">
+    <input type="file" id="fi" multiple hidden>
+    <div class="drop-icon">
+      <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <b>Select files to upload</b>
+    <span>or drag and drop files here · single or multiple files supported</span>
+    <div class="formats">
+      <span>PDF</span>
+      <span>PPTX / PPT</span>
+      <span>DOCX / DOC</span>
+      <span>XLSX</span>
+      <span>JPG / PNG / WebP</span>
+      <span>ZIP &amp; More</span>
+    </div>
+  </label>
+
+  <div class="center">
+    <button class="resume-pill" id="resumeBtn" hidden>
+      <span>Return to Selected Files</span>
+      <svg class="ico" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+  <p class="foot">
+    <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <span>100% private — all processing happens locally in your browser.</span>
+  </p>
+</section>
+
+<!-- PAGE 2: FILE QUEUE -->
+<section class="view" id="v2">
+  <div class="head">
+    <h2>Selected Files</h2>
+    <label class="ghost" style="cursor:pointer">
+      <svg class="ico" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>Add Files</span>
+      <input type="file" id="fi2" multiple hidden>
+    </label>
+  </div>
+  <div id="banner"></div>
+  <div id="list"></div>
+  <div class="bar">
+    <button class="ghost" id="back1">
+      <svg class="ico" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span>Back</span>
+    </button>
+    <button class="ghost" id="fix" hidden>Remove Invalid</button>
+    <button class="btn" id="opt">
+      <span>Configure Options</span>
+      <svg class="ico" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- PAGE 3: PROCESSING & RESULTS -->
+<section class="view" id="v3">
+  <h1 style="font-size:28px" id="pt">Processing Files…</h1>
+  <div class="ov"><div id="ob"></div></div>
+  <div class="sum" id="sum" hidden></div>
+  <div class="res" id="res"></div>
+  <div class="bar" id="fin" hidden>
+    <button class="ghost" id="backOpt">
+      <svg class="ico" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span>Back to Options</span>
+    </button>
+    <button class="ghost" id="more">New Session</button>
+    <button class="btn" id="all" hidden>
+      <svg class="ico" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Download All (ZIP)</span>
+    </button>
+  </div>
+</section>
+
+<!-- OPTIONS MODAL (2ND PAGE POPUP) -->
+<div class="overlay" id="modal">
+  <div class="box">
+    <div class="modal-top">
+      <button class="back-mini" id="cancel">
+        <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Back</span>
+      </button>
+      <h2>Select Action</h2>
+      <span style="width:64px"></span>
+    </div>
+
+    <!-- 2 Clean Action Cards -->
+    <div class="opts">
+      <div class="opt sel" data-m="size">
+        <div class="opt-icon">
+          <svg class="ico ico-md" viewBox="0 0 24 24"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </div>
+        <b>Compress File</b>
+        <span>Set target file size</span>
+      </div>
+      <div class="opt" data-m="resize" id="optR">
+        <div class="opt-icon">
+          <svg class="ico ico-md" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        </div>
+        <b>Resize Image</b>
+        <span>Set width &amp; height</span>
+      </div>
+    </div>
+
+    <!-- PANEL A: COMPRESS FILE -->
+    <div class="panel" id="p-size">
+      <!-- SINGLE FILE -->
+      <div id="singleBox">
+        <div class="range-card" id="rangeCard">
+          <div class="range-top">
+            <b id="origInfo">Original: —</b>
+            <span class="clarity-pill" id="clarityPill">High Clarity</span>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="sizeSlider" min="1" max="1000" value="200">
+          </div>
+          <div class="range-scale">
+            <span id="hardMinLbl">Extreme: —</span>
+            <span id="stdMinLbl">Standard Min: <strong>—</strong></span>
+            <span id="maxLbl">Original: —</span>
+          </div>
+        </div>
+
+        <label>Target File Size</label>
+        <div class="row">
+          <input id="ts" type="number" min="1" step="any" value="200">
+          <div class="seg" id="un">
+            <b data-v="1024" class="on">KB</b>
+            <b data-v="1048576">MB</b>
+          </div>
+        </div>
+        <div class="chips" id="sizeChips">
+          <span class="chip" data-v="20" data-u="1024">20 KB</span>
+          <span class="chip" data-v="50" data-u="1024">50 KB</span>
+          <span class="chip" data-v="100" data-u="1024">100 KB</span>
+          <span class="chip" data-v="200" data-u="1024">200 KB</span>
+          <span class="chip" data-v="500" data-u="1024">500 KB</span>
+          <span class="chip" data-v="1" data-u="1048576">1 MB</span>
+          <span class="chip" data-v="2" data-u="1048576">2 MB</span>
+        </div>
+      </div>
+
+      <!-- MULTI FILE: Low / Medium / Large Proportional Presets -->
+      <div id="multiBox" hidden>
+        <label>Batch Compression Level (Per-File Ratio)</label>
+        <div class="presets" id="presets">
+          <div class="preset" data-lv="low">
+            <b>Low</b>
+            <span>~75% size</span>
+          </div>
+          <div class="preset sel" data-lv="medium">
+            <b>Medium</b>
+            <span>~50% size</span>
+          </div>
+          <div class="preset" data-lv="large">
+            <b>Large</b>
+            <span>~25% size</span>
+          </div>
+        </div>
+        <div class="batch-preview" id="batchPreview"></div>
+      </div>
+
+      <label class="chk-row" id="pngOptRow" hidden>
+        <input type="checkbox" id="pngToJpg">
+        <span>Convert PNG to JPG for significantly smaller size</span>
+      </label>
+    </div>
+
+    <!-- PANEL B: RESIZE IMAGE (WIDTH & HEIGHT) -->
+    <div class="panel" id="p-resize" hidden>
+      <label>Dimensions</label>
+      <div class="dim-grid">
+        <div class="dim-field">
+          <span>Width</span>
+          <input id="rw" type="number" min="1" step="any" placeholder="Width">
+        </div>
+        <button type="button" class="link-btn on" id="lockRatio" title="Lock aspect ratio">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <div class="dim-field">
+          <span>Height</span>
+          <input id="rh" type="number" min="1" step="any" placeholder="Height">
+        </div>
+        <select id="ru" aria-label="Dimension unit">
+          <option value="px">px</option>
+          <option value="pct">%</option>
+          <option value="cm">cm</option>
+          <option value="mm">mm</option>
+          <option value="in">in</option>
+        </select>
+      </div>
+
+      <div class="row" id="dpiRow" hidden style="margin-top:8px">
+        <label style="margin:0;white-space:nowrap">Print Resolution (DPI)</label>
+        <input id="rd" type="number" value="300" min="72" max="1200">
+      </div>
+
+      <div class="out-dim-bar">
+        <span>Calculated Output</span>
+        <strong id="outDimPreview">—</strong>
+      </div>
+
+      <label style="margin-top:12px">Scaling Mode</label>
+      <div class="seg" id="fit">
+        <b data-v="fit" class="on">Fit</b>
+        <b data-v="crop">Crop</b>
+        <b data-v="stretch">Stretch</b>
+      </div>
+
+      <div class="chips" style="margin-bottom:12px">
+        <span class="chip" data-w="1920" data-h="1080" data-u="px" data-fit="fit">1920×1080</span>
+        <span class="chip" data-w="1280" data-h="720" data-u="px" data-fit="fit">1280×720</span>
+        <span class="chip" data-w="1080" data-h="1080" data-u="px" data-fit="crop">1080×1080</span>
+        <span class="chip" data-w="50" data-h="50" data-u="pct" data-fit="fit">50% Scale</span>
+        <span class="chip" data-w="35" data-h="45" data-u="mm" data-fit="crop">35×45 mm</span>
+      </div>
+
+      <label>Output Format &amp; Quality</label>
+      <div class="row">
+        <select id="rf" style="flex:1">
+          <option value="keep">Keep format</option>
+          <option value="image/jpeg">JPG</option>
+          <option value="image/png">PNG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+        <input id="rq" type="number" min="10" max="100" value="90" title="Quality percentage">
+        <span style="font-size:13px;font-weight:700;color:var(--mut)">% Q</span>
+      </div>
+    </div>
+
+    <small class="hint" id="hint"></small>
+    <div class="act">
+      <button class="ghost" id="cancel2">Back</button>
+      <button class="btn" id="go">Start Compression</button>
+    </div>
+  </div>
+</div>
+
+<!-- SMOOTH CLARITY WARNING POPUP -->
+<div class="warn-overlay" id="warnModal">
+  <div class="warn-card">
+    <div class="warn-badge-icon">
+      <svg class="ico ico-md" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h3>Below Standard Minimum Size</h3>
+    <p>Reducing this file below its standard minimum threshold will heavily compress resolution and make text or details appear blurry.</p>
+    <div class="warn-compare">
+      <div class="wc-col bad">
+        <span>Selected Target</span>
+        <strong id="wcTarget">—</strong>
+      </div>
+      <div class="wc-col good">
+        <span>Standard Minimum</span>
+        <strong id="wcMin">—</strong>
+      </div>
+    </div>
+    <div class="warn-actions">
+      <button class="btn" id="warnSnapBtn">Use Standard Minimum (Clear)</button>
+      <button class="ghost" id="warnKeepBtn">Keep Target Anyway (Blurry)</button>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="overlay" id="pvModal">
+  <div class="box pv-box">
+    <div class="modal-top">
+      <button class="back-mini" id="pvClose">
+        <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Back</span>
+      </button>
+      <h2 id="pvTitle" style="font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px">Preview</h2>
+      <span style="width:54px"></span>
+    </div>
+    <img id="pvImg" class="pv-img" alt="Preview">
+    <div class="pv-meta" id="pvMeta"></div>
+    <a class="btn" id="pvDl" style="width:100%;text-decoration:none">Download File</a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const ext=n=>n.includes('.')?n.split('.').pop().toLowerCase():'';
+const isImg=f=>f._d&&f._d.cls==='img';
+const fmt=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(2)+' MB';
+const toBlob=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
+const tick=()=>new Promise(r=>setTimeout(r,20));
+const ZOPT={type:'blob',compression:'DEFLATE',compressionOptions:{level:9}};
+
+let files=[], step=1;
+const S={mode:'size',un:1024,fit:'fit',preset:'medium',lock:true,blurAck:false,lastUnit:'px'};
+const RATIOS={low:0.75,medium:0.50,large:0.25};
+const IMGK=['jpeg','png','webp'],KN={jpeg:'JPG',png:'PNG',webp:'WebP'},MIME={jpeg:'image/jpeg',png:'image/png',webp:'image/webp'},EXT={jpeg:'jpg',png:'png',webp:'webp'};
+
+function show(n){
+  step=n;
+  document.querySelectorAll('.view').forEach((v,i)=>v.classList.toggle('on',i===n-1));
+  document.querySelectorAll('.st').forEach((s,i)=>{
+    s.classList.toggle('on',i===n-1);
+    s.classList.toggle('done',i<n-1 && files.length>0);
+  });
+  $('#resumeBtn').hidden=!(n===1 && files.length>0);
+}
+
+document.querySelectorAll('.st').forEach(el=>{
+  el.onclick=()=>{
+    const target=+el.dataset.s;
+    if(target<step && files.length)show(target);
+  };
+});
+
+function typeBadge(n){
+  const e=ext(n).toUpperCase();
+  return e?e.slice(0,4):'FILE';
+}
+
+function draw(src,w,h,white){
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round(w));
+  c.height=Math.max(1,Math.round(h));
+  const x=c.getContext('2d');
+  if(white){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}
+  x.imageSmoothingQuality='high';
+  x.drawImage(src,0,0,c.width,c.height);
+  return c;
+}
+
+/* ---------- Pre-Check & Dual Minimum Calibration ----------
+   stdMinBytes  = Standard Minimum (lowest size before noticeable blur/pixelation)
+   hardMinBytes = Absolute Minimum (extreme compression floor when blur is accepted)
+*/
+async function sniff(f){
+  const a=new Uint8Array(await f.slice(0,4096).arrayBuffer()),s=String.fromCharCode(...a.subarray(0,16));
+  if(a[0]===0xFF&&a[1]===0xD8)return 'jpeg';
+  if(a[0]===0x89&&s.slice(1,4)==='PNG')return 'png';
+  if(s.slice(0,4)==='RIFF'&&s.slice(8,12)==='WEBP')return 'webp';
+  if(String.fromCharCode(...a).includes('%PDF-'))return 'pdf';
+  if(a[0]===0x50&&a[1]===0x4B)return 'zip';
+  if(a[0]===0xD0&&a[1]===0xCF&&a[2]===0x11&&a[3]===0xE0)return 'ole';
+  return 'other';
+}
+
+async function loadPdfSafe(file){
+  const buf=await file.arrayBuffer();
+  return await pdfjsLib.getDocument({
+    data:buf,
+    disableWorker:true,
+    isEvalSupported:false,
+    useSystemFonts:true
+  }).promise;
+}
+
+async function diagnose(f){
+  const e=ext(f.name),k=await sniff(f);
+  const r={
+    kind:k,lvl:'ok',msg:'',info:'',
+    stdMinBytes:Math.max(2048,Math.round(f.size*0.22)),
+    hardMinBytes:Math.max(1024,Math.round(f.size*0.05)),
+    maxBytes:f.size
+  };
+  const bad=m=>(r.lvl='err',r.msg=m,r),warn=m=>{if(r.lvl==='ok'){r.lvl='warn';r.msg=m}};
+  const imgE={jpg:'jpeg',jpeg:'jpeg',png:'png',webp:'webp'}[e];
+  const office=['docx','pptx','xlsx'].includes(e);
+  r.cls=IMGK.includes(k)?'img':k==='pdf'?'pdf':(office&&k==='zip')?'office':(e==='zip'&&k==='zip')?'zip':'other';
+
+  if(!f.size)return bad('File is empty (0 bytes)');
+  if(f.size>300*1048576)warn('Large file — processing may take longer in browser');
+
+  if(imgE){
+    if(!IMGK.includes(k))return bad('Invalid .'+e+' image — file is damaged or renamed');
+    if(k!==imgE)warn(`Detected as ${KN[k]} inside .${e} — will process as ${KN[k]}`);
+  }
+
+  if(r.cls==='img'){
+    const m=await createImageBitmap(f).catch(()=>null);
+    if(!m)return bad('Image is corrupted and cannot be opened');
+    r.w=m.width;r.h=m.height;
+    r.info=`${m.width}×${m.height} px`;
+
+    // 1. Standard Minimum (keeps at least ~42% dimension & readable quality)
+    const stdScale=Math.min(1,Math.max(0.35,480/Math.max(m.width,m.height)));
+    const stdC=draw(m,m.width*stdScale,m.height*stdScale,k!=='png');
+    const stdB=await toBlob(stdC,MIME[k],k==='png'?undefined:0.42);
+    r.stdMinBytes=Math.min(f.size,Math.max(3072,Math.round(stdB.size)));
+
+    // 2. Extreme / Blurry Minimum
+    const hardSide=Math.max(16,Math.min(48,Math.round(Math.min(m.width,m.height)*0.08)));
+    const hardScale=hardSide/Math.max(m.width,m.height);
+    const hardC=draw(m,m.width*hardScale,m.height*hardScale,k!=='png');
+    const hardB=await toBlob(hardC,MIME[k],k==='png'?undefined:0.05);
+    r.hardMinBytes=Math.min(r.stdMinBytes,Math.max(1024,Math.ceil(hardB.size*1.1)));
+    m.close&&m.close();
+  }else if(e==='pdf'||k==='pdf'){
+    if(k!=='pdf')return bad('Invalid PDF file — header missing or damaged');
+    try{
+      const doc=await loadPdfSafe(f);
+      const n=doc.numPages;
+      r.pages=n;r.info=n+' page'+(n>1?'s':'');
+
+      // Standard readable PDF floor (0.55x scale, 0.36 quality)
+      const pg1=await doc.getPage(1);
+      const vStd=pg1.getViewport({scale:0.55});
+      const c1=document.createElement('canvas');c1.width=Math.max(1,Math.round(vStd.width));c1.height=Math.max(1,Math.round(vStd.height));
+      const x1=c1.getContext('2d');x1.fillStyle='#fff';x1.fillRect(0,0,c1.width,c1.height);
+      await pg1.render({canvasContext:x1,viewport:vStd}).promise;
+      const bStd=await toBlob(c1,'image/jpeg',0.36);
+      r.stdMinBytes=Math.min(f.size,Math.max(6144,Math.round((bStd.size*n)+2400)));
+
+      // Extreme blurry PDF floor (0.16x scale, 0.08 quality)
+      const vHard=pg1.getViewport({scale:0.16});
+      const c2=document.createElement('canvas');c2.width=Math.max(1,Math.round(vHard.width));c2.height=Math.max(1,Math.round(vHard.height));
+      const x2=c2.getContext('2d');x2.fillStyle='#fff';x2.fillRect(0,0,c2.width,c2.height);
+      await pg1.render({canvasContext:x2,viewport:vHard}).promise;
+      const bHard=await toBlob(c2,'image/jpeg',0.08);
+      r.hardMinBytes=Math.min(r.stdMinBytes,Math.max(2048,Math.ceil((bHard.size*n)+1800)));
+
+      doc.destroy();
+      if(n>120)warn(n+' pages — processing may take a moment');
+    }catch(x){
+      if(x&&x.name==='PasswordException')return bad('PDF is password-protected — unlock it first');
+      return bad('PDF cannot be read — file may be corrupted');
+    }
+  }else if(office){
+    if(k==='ole')return bad('Password-protected Office file — remove password first');
+    if(k!=='zip')return bad('Invalid .'+e+' file — damaged or unsupported format');
+    let z;try{z=await JSZip.loadAsync(f)}catch(x){return bad('Office file is corrupted')}
+    const main={docx:'word/document.xml',pptx:'ppt/presentation.xml',xlsx:'xl/workbook.xml'}[e];
+    if(!z.file('[Content_Types].xml')||!z.file(main))return bad('Corrupted Office structure');
+    const media=Object.keys(z.files).filter(x=>/\/media\/[^/]+\.(jpe?g|png|webp|gif|bmp)$/i.test(x));
+    r.info=media.length?`${media.length} embedded media file${media.length>1?'s':''}`:'XML document';
+    let rawMedia=0;
+    for(const mName of media){const u=await z.file(mName).async('uint8array');rawMedia+=u.length}
+    const baseStruct=Math.max(2048,Math.round((f.size-rawMedia)*0.8));
+    r.stdMinBytes=Math.min(f.size,Math.max(4096,Math.round(baseStruct+(media.length*6500))));
+    r.hardMinBytes=Math.min(r.stdMinBytes,Math.max(2048,Math.round(baseStruct+(media.length*1100))));
+  }else if(e==='zip'){
+    if(k!=='zip')return bad('Invalid ZIP archive');
+    try{await JSZip.loadAsync(f)}catch(x){return bad('Corrupted or encrypted ZIP')}
+    r.stdMinBytes=Math.min(f.size,Math.max(2048,Math.round(f.size*0.75)));
+    r.hardMinBytes=Math.min(r.stdMinBytes,Math.max(1024,Math.round(f.size*0.55)));
+  }else if(['ppt','doc','xls'].includes(e)&&k==='ole'){
+    r.cls='ole';
+    r.info='Legacy Office binary (.'+e+')';
+    r.stdMinBytes=Math.min(f.size,Math.max(4096,Math.round(f.size*0.55)));
+    r.hardMinBytes=Math.min(r.stdMinBytes,Math.max(2048,Math.round(f.size*0.35)));
+  }else{
+    if(f.size<=15*1048576){
+      const z=new JSZip();z.file(f.name,f);
+      const zb=await z.generateAsync(ZOPT);
+      r.stdMinBytes=Math.min(f.size,Math.max(1024,zb.size));
+      r.hardMinBytes=r.stdMinBytes;
+    }else{
+      r.stdMinBytes=Math.min(f.size,Math.max(1024,Math.round(f.size*0.65)));
+      r.hardMinBytes=r.stdMinBytes;
+    }
+  }
+  return r;
+}
+
+/* ---------- Queue Rendering ---------- */
+function render(){
+  const L=$('#list');L.innerHTML='';
+  files.forEach((f,i)=>{
+    const d=f._d,el=document.createElement('div');
+    el.className='item '+(d?d.lvl:'');
+    const stdNote=d&&d.lvl!=='err'?` · Standard min: ${fmt(d.stdMinBytes)}`:'';
+    el.innerHTML=`
+      <div class="f-tag">${typeBadge(f.name)}</div>
+      <div class="nm">
+        <b></b>
+        <span class="meta">${fmt(f.size)}${stdNote}</span>
+        <i class="m ${d?d.lvl:'ok'}"></i>
+      </div>
+      ${d?'':'<div class="sp"></div>'}
+      <button class="x" title="Remove file" aria-label="Remove file">
+        <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>`;
+    el.querySelector('b').textContent=f.name;
+    el.querySelector('.m').textContent=d
+      ?(d.lvl==='ok'?(d.info||'Ready to compress'):d.msg)
+      :'Calculating standard minimum size…';
+    el.querySelector('.x').onclick=()=>{files.splice(i,1);files.length?render():show(1)};
+    L.appendChild(el);
+  });
+
+  const c=l=>files.filter(f=>f._d&&f._d.lvl===l).length;
+  const checking=files.some(f=>!f._d);
+  $('#banner').innerHTML=checking
+    ?'<span>Analyzing files and calculating clarity thresholds…</span>'
+    :`<span>Ready: ${c('ok')} · Warnings: ${c('warn')} · Invalid: ${c('err')}</span><span>${files.length} file${files.length>1?'s':''}</span>`;
+  $('#fix').hidden=!c('err');
+  $('#opt').disabled=checking||!files.some(f=>f._d.lvl!=='err');
+}
+
+async function add(list){
+  if(!list.length)return;
+  files.push(...list);
+  show(2);render();
+  await Promise.all(list.map(async f=>{
+    try{f._d=await diagnose(f)}
+    catch(x){f._d={kind:'other',cls:'other',lvl:'warn',msg:'Ready (standard compression)',info:'',stdMinBytes:Math.max(2048,Math.round(f.size*0.3)),hardMinBytes:Math.max(1024,Math.round(f.size*0.1)),maxBytes:f.size}}
+  }));
+  render();
+  if(files.some(f=>f._d.lvl!=='err'))setTimeout(openM,240);
+}
+
+/* ---------- Modal, Clarity Threshold & Smooth Warning Popup ---------- */
+function validFiles(){return files.filter(f=>f._d&&f._d.lvl!=='err')}
+
+function openM(){
+  const vf=validFiles();
+  if(!vf.length)return;
+  S.blurAck=false;
+  const hasImg=vf.some(isImg);
+  const hasPng=vf.some(f=>f._d.kind==='png');
+  $('#optR').classList.toggle('dis',!hasImg);
+  if(!hasImg)S.mode='size';
+  $('#pngOptRow').hidden=!hasPng;
+
+  const isMulti=vf.length>1;
+  $('#singleBox').hidden=isMulti;
+  $('#multiBox').hidden=!isMulti;
+
+  if(!isMulti){
+    setupSingleBounds(vf[0]);
+  }else{
+    renderBatchPreview();
+  }
+
+  const firstImg=vf.find(isImg);
+  if(firstImg){
+    S.aspect=firstImg._d.w/firstImg._d.h;
+    S.origW=firstImg._d.w;
+    S.origH=firstImg._d.h;
+    if(!$('#rw').value && !$('#rh').value){
+      $('#rw').value=firstImg._d.w;
+      $('#rh').value=firstImg._d.h;
+    }
+  }
+
+  setMode(S.mode);
+  $('#modal').classList.add('open');
+}
+
+function setupSingleBounds(f){
+  const d=f._d;
+  const hardMin=Math.max(1024,d.hardMinBytes);
+  const stdMin=Math.max(hardMin,d.stdMinBytes);
+  const maxB=Math.max(stdMin,f.size);
+
+  $('#origInfo').textContent=`Original: ${fmt(f.size)}`;
+  $('#hardMinLbl').textContent=`Min: ${fmt(hardMin)}`;
+  $('#stdMinLbl').innerHTML=`Standard Min: <strong>${fmt(stdMin)}</strong>`;
+  $('#maxLbl').textContent=`Max: ${fmt(maxB)}`;
+
+  // Smart default: halfway between stdMin and original
+  const defB=Math.max(stdMin,Math.min(maxB,Math.round((stdMin+maxB)*0.55)));
+  setTargetBytes(defB,false);
+
+  const minKB=Math.max(1,Math.floor(hardMin/1024));
+  const maxKB=Math.max(minKB,Math.ceil(maxB/1024));
+  const sl=$('#sizeSlider');
+  sl.min=minKB;sl.max=maxKB;
+  sl.value=Math.min(maxKB,Math.max(minKB,Math.round(defB/1024)));
+
+  // Mark chips below stdMin as blurry-zone chips (still clickable, will trigger smooth warning)
+  document.querySelectorAll('#sizeChips .chip').forEach(ch=>{
+    const chipBytes=(+ch.dataset.v)*(+ch.dataset.u);
+    ch.hidden=chipBytes>maxB || chipBytes<hardMin;
+    ch.classList.toggle('blur-chip',chipBytes<stdMin);
+  });
+
+  updateClarityUI(defB);
+}
+
+function currentTargetBytes(){
+  const v=+$('#ts').value||0;
+  return Math.round(v*S.un);
+}
+
+function setTargetBytes(bytes,syncSlider=true){
+  if(bytes>=1048576){
+    setSeg('un',1048576);
+    $('#ts').value=+(bytes/1048576).toFixed(2);
+  }else{
+    setSeg('un',1024);
+    $('#ts').value=Math.max(1,Math.round(bytes/1024));
+  }
+  if(syncSlider){
+    const sl=$('#sizeSlider');
+    const kb=Math.round(bytes/1024);
+    sl.value=Math.min(+sl.max,Math.max(+sl.min,kb));
+  }
+  updateClarityUI(bytes);
+}
+
+function updateClarityUI(bytes){
+  const vf=validFiles();
+  if(vf.length!==1)return;
+  const f=vf[0],stdMin=f._d.stdMinBytes,orig=f.size;
+  const card=$('#rangeCard'),pill=$('#clarityPill');
+
+  if(bytes<stdMin){
+    card.classList.add('blur-zone');
+    pill.className='clarity-pill blur';
+    pill.textContent='Blurry · Below Min';
+  }else if(bytes<orig*0.55){
+    card.classList.remove('blur-zone');
+    pill.className='clarity-pill mid';
+    pill.textContent='Balanced Clarity';
+  }else{
+    card.classList.remove('blur-zone');
+    pill.className='clarity-pill';
+    pill.textContent='High Clarity';
+  }
+}
+
+/* Smooth Threshold Warning Popup Controller */
+function checkThresholdWarning(forceShow=false){
+  const vf=validFiles();
+  if(S.mode!=='size' || vf.length!==1)return false;
+  const f=vf[0];
+  const target=currentTargetBytes();
+  const stdMin=f._d.stdMinBytes;
+
+  if(target>0 && target<stdMin && (!S.blurAck || forceShow)){
+    $('#wcTarget').textContent=fmt(target);
+    $('#wcMin').textContent=fmt(stdMin);
+    $('#warnModal').classList.add('open');
+    return true;
+  }
+  return false;
+}
+
+$('#warnSnapBtn').onclick=()=>{
+  const vf=validFiles();
+  if(vf.length===1){
+    S.blurAck=false;
+    setTargetBytes(vf[0]._d.stdMinBytes,true);
+    upd();
+  }
+  $('#warnModal').classList.remove('open');
+};
+
+$('#warnKeepBtn').onclick=()=>{
+  S.blurAck=true;
+  $('#warnModal').classList.remove('open');
+  upd();
+};
+
+$('#warnModal').onclick=e=>{
+  if(e.target===$('#warnModal'))$('#warnModal').classList.remove('open');
+};
+
+function renderBatchPreview(){
+  const ratio=RATIOS[S.preset];
+  const box=$('#batchPreview');
+  box.innerHTML=validFiles().map(f=>{
+    const target=Math.max(f._d.stdMinBytes,Math.min(f.size,Math.round(f.size*ratio)));
+    return `<div class="bp-row"><span class="bp-name">${f.name}</span><span class="bp-size">${fmt(f.size)} → ~${fmt(target)}</span></div>`;
+  }).join('');
+}
+
+function setMode(m){
+  S.mode=m;
+  document.querySelectorAll('.opt').forEach(o=>o.classList.toggle('sel',o.dataset.m===m));
+  $('#p-size').hidden=m!=='size';
+  $('#p-resize').hidden=m!=='resize';
+  if(m==='resize')updateOutDimPreview();
+  upd();
+}
+
+function setSeg(id,v){
+  S[id]=v;
+  document.querySelectorAll('#'+id+' [data-v]').forEach(x=>x.classList.toggle('on',String(x.dataset.v)===String(v)));
+}
+
+/* Accurate Resize Calculator & Live Pixel Readout */
+function computeResizePixels(){
+  const w=+$('#rw').value||0,h=+$('#rh').value||0;
+  const unit=$('#ru').value;
+  const dpi=+$('#rd').value||300;
+  const origW=S.origW||1920,origH=S.origH||1080;
+
+  let W=0,H=0;
+  if(unit==='pct'){
+    W=w?Math.round(origW*(w/100)):0;
+    H=h?Math.round(origH*(h/100)):0;
+  }else{
+    const mult={px:1,cm:dpi/2.54,mm:dpi/25.4,in:dpi}[unit];
+    W=w?Math.round(w*mult):0;
+    H=h?Math.round(h*mult):0;
+  }
+  if(W && !H)H=Math.round(W/(S.aspect||(origW/origH)));
+  if(H && !W)W=Math.round(H*(S.aspect||(origW/origH)));
+  return {W,H,unit,rawW:w,rawH:h};
+}
+
+function updateOutDimPreview(){
+  $('#dpiRow').hidden=!['cm','mm','in'].includes($('#ru').value);
+  const {W,H,unit,rawW,rawH}=computeResizePixels();
+  const imgCount=validFiles().filter(isImg).length;
+  if(!W&&!H){
+    $('#outDimPreview').textContent='Enter width or height';
+    return;
+  }
+  if(imgCount>1 && unit==='pct'){
+    $('#outDimPreview').textContent=`${rawW||rawH}% scale per image`;
+  }else{
+    $('#outDimPreview').textContent=`${W} × ${H} px`;
+  }
+}
+
+function upd(){
+  const vf=validFiles();
+  if(S.mode==='size'){
+    if(vf.length===1){
+      const f=vf[0],stdMin=f._d.stdMinBytes,t=currentTargetBytes();
+      if(t>0 && t<stdMin){
+        $('#hint').textContent=`Warning: ${fmt(t)} is below the standard minimum (${fmt(stdMin)}). Output will appear blurry.`;
+      }else{
+        $('#hint').textContent=`Standard minimum for "${f.name}" is ${fmt(stdMin)}. Staying at or above this size preserves readability.`;
+      }
+    }else{
+      const pct=Math.round(RATIOS[S.preset]*100);
+      $('#hint').textContent=`Each file compresses independently toward ~${pct}% of its original size, floored at its standard clarity minimum.`;
+    }
+  }else{
+    updateOutDimPreview();
+    $('#hint').textContent={
+      fit:'Fit scales the image proportionally within the target bounds without cropping.',
+      crop:'Crop fills the exact target dimensions and trims excess edges.',
+      stretch:'Stretch resizes to the exact width and height without preserving aspect ratio.'
+    }[S.fit];
+  }
+}
+
+// Slider & Input Bindings with Smooth Warning Trigger
+$('#sizeSlider').oninput=e=>{
+  const kb=+e.target.value;
+  if(S.un===1048576)$('#ts').value=+(kb/1024).toFixed(2);
+  else $('#ts').value=kb;
+  const bytes=currentTargetBytes();
+  const vf=validFiles();
+  if(vf.length===1 && bytes>=vf[0]._d.stdMinBytes)S.blurAck=false;
+  updateClarityUI(bytes);
+  upd();
+};
+
+$('#sizeSlider').onchange=()=>{
+  checkThresholdWarning(false);
+};
+
+$('#ts').oninput=()=>{
+  const bytes=currentTargetBytes();
+  const sl=$('#sizeSlider');
+  sl.value=Math.min(+sl.max,Math.max(+sl.min,Math.round(bytes/1024)));
+  const vf=validFiles();
+  if(vf.length===1 && bytes>=vf[0]._d.stdMinBytes)S.blurAck=false;
+  updateClarityUI(bytes);
+  upd();
+};
+
+$('#ts').onchange=()=>{
+  const vf=validFiles();
+  if(vf.length===1){
+    const maxB=vf[0].size;
+    let bytes=currentTargetBytes();
+    if(bytes>maxB){
+      setTargetBytes(maxB,true);
+      bytes=maxB;
+    }
+    checkThresholdWarning(false);
+  }
+  upd();
+};
+
+document.querySelectorAll('.seg').forEach(g=>g.onclick=e=>{
+  const b=e.target.closest('[data-v]');if(!b)return;
+  if(g.id==='un'){
+    const oldUn=S.un,newUn=+b.dataset.v;
+    if(oldUn!==newUn){
+      const bytes=(+$('#ts').value||0)*oldUn;
+      setSeg('un',newUn);
+      $('#ts').value=newUn===1048576?+(bytes/1048576).toFixed(2):Math.max(1,Math.round(bytes/1024));
+      updateClarityUI(currentTargetBytes());
+    }
+  }else{
+    setSeg(g.id,b.dataset.v);
+  }
+  upd();
+});
+
+document.querySelectorAll('.preset').forEach(p=>p.onclick=()=>{
+  S.preset=p.dataset.lv;
+  document.querySelectorAll('.preset').forEach(x=>x.classList.toggle('sel',x===p));
+  renderBatchPreview();upd();
+});
+
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  const d=c.dataset;
+  if(d.w){
+    $('#ru').value=d.u;
+    S.lastUnit=d.u;
+    $('#rw').value=d.w;$('#rh').value=d.h;$('#rd').value=300;
+    setSeg('fit',d.fit);
+  }else{
+    setSeg('un',+d.u);
+    $('#ts').value=d.v;
+    const bytes=currentTargetBytes();
+    const sl=$('#sizeSlider');
+    sl.value=Math.min(+sl.max,Math.max(+sl.min,Math.round(bytes/1024)));
+    updateClarityUI(bytes);
+    checkThresholdWarning(false);
+  }
+  upd();
+});
+
+// Resize Unit Conversion & Aspect Ratio Lock
+$('#ru').onchange=()=>{
+  const newU=$('#ru').value,oldU=S.lastUnit;
+  if(newU==='pct'){
+    $('#rw').value=100;$('#rh').value=100;
+  }else if(oldU==='pct' && S.origW && S.origH){
+    const dpi=+$('#rd').value||300;
+    const div={px:1,cm:dpi/2.54,mm:dpi/25.4,in:dpi}[newU];
+    $('#rw').value=+(S.origW/div).toFixed(newU==='px'?0:1);
+    $('#rh').value=+(S.origH/div).toFixed(newU==='px'?0:1);
+  }
+  S.lastUnit=newU;
+  upd();
+};
+
+$('#lockRatio').onclick=()=>{
+  S.lock=!S.lock;
+  $('#lockRatio').classList.toggle('on',S.lock);
+  if(S.lock && +$('#rw').value>0){
+    if($('#ru').value==='pct')$('#rh').value=$('#rw').value;
+    else if(S.aspect)$('#rh').value=Math.max(1,Math.round((+$('#rw').value)/S.aspect));
+    updateOutDimPreview();
+  }
+};
+
+$('#rw').oninput=()=>{
+  if(S.lock && +$('#rw').value>0){
+    if($('#ru').value==='pct')$('#rh').value=$('#rw').value;
+    else if(S.aspect)$('#rh').value=Math.max(1,Math.round((+$('#rw').value)/S.aspect));
+  }
+  updateOutDimPreview();
+};
+
+$('#rh').oninput=()=>{
+  if(S.lock && +$('#rh').value>0){
+    if($('#ru').value==='pct')$('#rw').value=$('#rh').value;
+    else if(S.aspect)$('#rw').value=Math.max(1,Math.round((+$('#rh').value)*S.aspect));
+  }
+  updateOutDimPreview();
+};
+
+document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>setMode(o.dataset.m));
+document.querySelectorAll('#modal input,#modal select').forEach(i=>i.addEventListener('input',upd));
+
+$('#fi').onchange=e=>{add([...e.target.files]);e.target.value=''};
+$('#fi2').onchange=e=>{add([...e.target.files]);e.target.value=''};
+$('#opt').onclick=openM;
+$('#cancel').onclick=()=>$('#modal').classList.remove('open');
+$('#cancel2').onclick=()=>$('#modal').classList.remove('open');
+$('#modal').onclick=e=>{if(e.target===$('#modal'))$('#modal').classList.remove('open')};
+$('#back1').onclick=()=>show(1);
+$('#resumeBtn').onclick=()=>show(2);
+$('#backOpt').onclick=()=>{show(2);setTimeout(openM,120)};
+$('#more').onclick=()=>{files=[];show(1)};
+$('#fix').onclick=()=>{files=files.filter(f=>!f._d||f._d.lvl!=='err');files.length?render():show(1)};
+
+const dz=$('#drop');
+['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('over')}));
+dz.addEventListener('drop',e=>add([...e.dataTransfer.files]));
+
+function getOpts(){
+  const vf=validFiles();
+  if(S.mode==='size'){
+    const pngJpg=$('#pngToJpg').checked;
+    if(vf.length===1){
+      const bytes=currentTargetBytes();
+      if(!(bytes>=1024))return 'Please enter a valid target size (minimum 1 KB).';
+      return {mode:'size',multi:false,bytes,pngJpg};
+    }
+    return {mode:'size',multi:true,ratio:RATIOS[S.preset],level:S.preset,pngJpg};
+  }
+  const {W,H,unit,rawW,rawH}=computeResizePixels();
+  if(!W&&!H)return 'Please enter a width or height.';
+  if(W>16000||H>16000)return 'Output dimensions cannot exceed 16,000 px.';
+  const q=Math.min(1,Math.max(0.1,(+$('#rq').value||90)/100));
+  return {mode:'resize',w:W,h:H,unit,pctW:rawW,pctH:rawH,fit:S.fit,fmt:$('#rf').value,q};
+}
+
+$('#go').onclick=()=>{
+  if(files.some(f=>!f._d))return alert('Still analyzing files — please wait a moment.');
+  if(!validFiles().length)return alert('No valid files available to process.');
+  // Final gate: if target is below standard min and not yet acknowledged, show smooth warning first
+  if(checkThresholdWarning(false))return;
+  const o=getOpts();
+  if(typeof o==='string')return alert(o);
+  $('#modal').classList.remove('open');
+  show(3);
+  setTimeout(()=>run(o),300);
+};
+
+/* ---------- Compression & Resize Engines ---------- */
+function fitDraw(m,o,white){
+  let W=o.w,H=o.h,sw=m.width,sh=m.height,sx=0,sy=0,sW=sw,sH=sh;
+  if(o.unit==='pct'){
+    W=Math.max(1,Math.round(sw*((o.pctW||o.pctH)/100)));
+    H=Math.max(1,Math.round(sh*((o.pctH||o.pctW)/100)));
+  }else{
+    if(!W)W=Math.round(H*sw/sh);
+    if(!H)H=Math.round(W*sh/sw);
+    if(o.w&&o.h){
+      if(o.fit==='fit'){const s=Math.min(W/sw,H/sh);W=Math.max(1,Math.round(sw*s));H=Math.max(1,Math.round(sh*s))}
+      else if(o.fit==='crop'){const s=Math.max(W/sw,H/sh);sW=W/s;sH=H/s;sx=(sw-sW)/2;sy=(sh-sH)/2}
+    }
+  }
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');
+  if(white){x.fillStyle='#fff';x.fillRect(0,0,W,H)}
+  x.imageSmoothingQuality='high';
+  x.drawImage(m,sx,sy,sW,sH,0,0,W,H);
+  return c;
+}
+
+async function qualitySearch(c,type,t,minQ=0.04,maxQ=0.95){
+  let lo=minQ,hi=maxQ,best=null;
+  for(let i=0;i<9;i++){
+    const q=(lo+hi)/2,b=await toBlob(c,type,q);
+    if(b.size<=t){best=b;lo=q}else hi=q;
+  }
+  return best||await toBlob(c,type,minQ);
+}
+
+async function imgResize(f,o){
+  const m=await createImageBitmap(f),type=o.fmt==='keep'?MIME[f._d.kind]:o.fmt;
+  const c=fitDraw(m,o,type==='image/jpeg');
+  const b=await toBlob(c,type,o.q);
+  const note=(c.width>m.width||c.height>m.height)?'Upscaled':'';
+  return {blob:b,w:c.width,h:c.height,type,note};
+}
+
+async function imgCompress(f,t,pngJpg){
+  const m=await createImageBitmap(f);
+  const k=(f._d.kind==='png'&&pngJpg)?'jpeg':f._d.kind;
+  const png=k==='png',type=MIME[k];
+
+  if(!png){
+    const fullB=await qualitySearch(draw(m,m.width,m.height,true),type,t,0.38,0.95);
+    if(fullB.size<=t)return {blob:fullB,ext:EXT[k]};
+  }
+
+  let lo=0.02,hi=1.0,best=null;
+  for(let i=0;i<10;i++){
+    const s=(lo+hi)/2;
+    const c=draw(m,m.width*s,m.height*s,!png);
+    const b=png?await toBlob(c,type):await qualitySearch(c,type,t,0.06,0.75);
+    if(b.size<=t){best=b;lo=s}else hi=s;
+  }
+  if(best)return {blob:best,ext:EXT[k]};
+
+  const minC=draw(m,Math.max(12,m.width*0.02),Math.max(12,m.height*0.02),!png);
+  const last=png?await toBlob(minC,type):await toBlob(minC,type,0.04);
+  return {blob:last,ext:EXT[k]};
+}
+
+function buildPdf(pages,k,q){
+  let pdf;
+  pages.forEach((p,i)=>{
+    const c=draw(p.c,p.c.width*k,p.c.height*k,true);
+    const o=p.w>p.h?'l':'p';
+    if(i===0)pdf=new jspdf.jsPDF({unit:'pt',format:[p.w,p.h],orientation:o,compress:true});
+    else pdf.addPage([p.w,p.h],o);
+    pdf.addImage(c.toDataURL('image/jpeg',q),'JPEG',0,0,p.w,p.h,undefined,'FAST');
+  });
+  return pdf.output('blob');
+}
+
+async function pdfCompress(f,t){
+  const doc=await loadPdfSafe(f),pages=[];
+  const renderScale=doc.numPages>40?1.0:1.35;
+  for(let i=1;i<=doc.numPages;i++){
+    const pg=await doc.getPage(i),v1=pg.getViewport({scale:1}),v=pg.getViewport({scale:renderScale});
+    const c=document.createElement('canvas');c.width=v.width;c.height=v.height;
+    const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+    await pg.render({canvasContext:x,viewport:v}).promise;
+    pages.push({c,w:v1.width,h:v1.height});
+    if(i%6===0)await tick();
+  }
+  doc.destroy();
+
+  let last;
+  for(const k of [1,0.78,0.6,0.45,0.32,0.22,0.14,0.09]){
+    let lo=0.06,hi=0.88,best=null;
+    for(let i=0;i<6;i++){
+      const q=(lo+hi)/2,b=buildPdf(pages,k,q);last=b;
+      if(b.size<=t){best=b;lo=q}else hi=q;
+    }
+    if(best)return best;
+    await tick();
+  }
+  return last;
+}
+
+async function officeCompress(f,t,convertPng){
+  const zip=await JSZip.loadAsync(f);
+  Object.keys(zip.files).forEach(n=>{
+    if(/^docProps\/thumbnail\./i.test(n))zip.remove(n);
+  });
+
+  let b=await zip.generateAsync(ZOPT);
+  if(b.size<=t)return b;
+
+  const names=Object.keys(zip.files).filter(n=>/\/media\/[^/]+\.(jpe?g|png|webp|bmp)$/i.test(n));
+  const bm={};
+  for(const n of names){
+    try{bm[n]=await createImageBitmap(await zip.file(n).async('blob'))}catch(e){}
+  }
+  const validMedia=Object.keys(bm);
+  if(!validMedia.length)return b;
+
+  const renameMap={};
+  if(convertPng){
+    for(const n of validMedia){
+      if(/\.png$/i.test(n))renameMap[n]=n.replace(/\.png$/i,'.jpg');
+    }
+    if(Object.keys(renameMap).length){
+      for(const fn of Object.keys(zip.files)){
+        if(/\.rels$/i.test(fn)){
+          let relTxt=await zip.file(fn).async('string');
+          for(const [oldP,newP] of Object.entries(renameMap)){
+            relTxt=relTxt.split(oldP.split('/').pop()).join(newP.split('/').pop());
+          }
+          zip.file(fn,relTxt);
+        }
+      }
+      if(zip.file('[Content_Types].xml')){
+        let ct=await zip.file('[Content_Types].xml').async('string');
+        if(!/Extension="jpg"/i.test(ct)){
+          ct=ct.replace(/(<Types[^>]*>)/,'$1<Default Extension="jpg" ContentType="image/jpeg"/>');
+          zip.file('[Content_Types].xml',ct);
+        }
+      }
+      for(const oldP of Object.keys(renameMap))zip.remove(oldP);
+    }
+  }
+
+  const gen=async s=>{
+    for(const n of validMedia){
+      const m=bm[n];
+      const targetPath=renameMap[n]||n;
+      const isPng=/\.png$/i.test(targetPath);
+      const k=Math.max(0.05,1-s*0.93);
+      const q=Math.max(0.06,0.88-s*0.80);
+      const c=draw(m,m.width*k,m.height*k,!isPng);
+      zip.file(targetPath,await toBlob(c,isPng?'image/png':'image/jpeg',q));
+    }
+    return zip.generateAsync(ZOPT);
+  };
+
+  let lo=0,hi=1,best=null;
+  for(let i=0;i<8;i++){
+    const s=(lo+hi)/2,r=await gen(s);
+    if(r.size<=t){best=r;hi=s}else lo=s;
+  }
+  return best||await gen(1);
+}
+
+async function oleCompress(f){
+  const buf=new Uint8Array(await f.arrayBuffer());
+  const out=new Uint8Array(buf);
+  let i=0,patched=0;
+  while(i<out.length-4){
+    if(out[i]===0xFF&&out[i+1]===0xD8&&out[i+2]===0xFF){
+      let end=i+3;
+      while(end<out.length-1&&!(out[end]===0xFF&&out[end+1]===0xD9))end++;
+      if(end<out.length-1){
+        end+=2;
+        const slice=out.slice(i,end);
+        if(slice.length>8192){
+          try{
+            const bmp=await createImageBitmap(new Blob([slice],{type:'image/jpeg'}));
+            const c=draw(bmp,bmp.width*0.55,bmp.height*0.55,true);
+            const nb=new Uint8Array(await (await toBlob(c,'image/jpeg',0.38)).arrayBuffer());
+            if(nb.length<slice.length){
+              out.set(nb,i);
+              out.fill(0,i+nb.length,end);
+              patched++;
+            }
+          }catch(e){}
+        }
+        i=end;continue;
+      }
+    }
+    i++;
+  }
+  const z=new JSZip();
+  z.file(f.name,patched?out:buf);
+  return z.generateAsync(ZOPT);
+}
+
+async function zipOne(f){
+  const z=new JSZip();z.file(f.name,f);
+  return z.generateAsync(ZOPT);
+}
+
+const sizeLabel=t=>t>=1048576?(t/1048576).toFixed(t%1048576?1:0)+'MB':Math.round(t/1024)+'KB';
+
+async function processFile(f,o){
+  const d=f._d,e=ext(f.name),base=f.name.replace(/\.[^.]+$/,'');
+  if(o.mode==='resize'){
+    if(d.cls!=='img')return {skip:'Not an image · skipped'};
+    const r=await imgResize(f,o);
+    const outExt=r.type==='image/jpeg'?'jpg':r.type==='image/png'?'png':'webp';
+    return {blob:r.blob,name:`${base}-${r.w}x${r.h}.${outExt}`,note:r.note,resized:true,w:r.w,h:r.h,isImg:true};
+  }
+
+  // Respect user's explicit target (even if below stdMinBytes when blur was confirmed)
+  const rawT=o.multi?Math.max(d.stdMinBytes,Math.round(f.size*o.ratio)):o.bytes;
+  const t=Math.max(d.hardMinBytes,rawT);
+  const isBlurry=!o.multi && o.bytes<d.stdMinBytes;
+
+  if(f.size<=t)return {blob:f,name:f.name,note:'Already at or below target size',isImg:d.cls==='img'};
+
+  let outBlob=f,outExt=d.cls==='img'?EXT[d.kind]:e,zipped=false;
+  if(d.cls==='img'){
+    const res=await imgCompress(f,t,o.pngJpg);
+    outBlob=res.blob;outExt=res.ext;
+  }else if(d.cls==='pdf'){
+    outBlob=await pdfCompress(f,t);
+  }else if(d.cls==='office'||d.cls==='zip'){
+    outBlob=await officeCompress(f,t,t<d.stdMinBytes*1.2);
+  }else if(d.cls==='ole'){
+    outBlob=await oleCompress(f);zipped=true;
+  }else{
+    outBlob=await zipOne(f);zipped=true;
+  }
+
+  if(outBlob.size>=f.size){
+    return {blob:f,name:f.name,note:'Already maximally compressed',isImg:d.cls==='img'};
+  }
+  const outName=zipped?`${f.name}.zip`:`${base}-${sizeLabel(outBlob.size)}.${outExt}`;
+  return {
+    blob:outBlob,
+    name:outName,
+    note:isBlurry?'Compressed below standard minimum (reduced clarity)':'',
+    isImg:d.cls==='img'
+  };
+}
+
+/* ---------- Execution & Results ---------- */
+async function run(o){
+  const box=$('#res');box.innerHTML='';
+  $('#fin').hidden=true;$('#sum').hidden=true;$('#ob').style.width='0%';
+  $('#pt').textContent='Processing Files…';
+
+  const outs=[];let before=0,after=0;
+  for(let i=0;i<files.length;i++){
+    const f=files[i],d=f._d;
+    const row=document.createElement('div');row.className='item work';
+    row.innerHTML=`<div class="f-tag">${typeBadge(f.name)}</div><div class="nm"><b></b><span class="meta">Compressing…</span></div><div class="sp"></div>`;
+    row.querySelector('b').textContent=f.name;
+    box.appendChild(row);
+
+    const sp=row.querySelector('.meta');
+    const fin=(txt,rightHtml,warn)=>{
+      row.classList.remove('work');
+      sp.textContent=txt;
+      if(warn)sp.classList.add('note');
+      row.querySelector('.sp').outerHTML=rightHtml;
+    };
+
+    if(d.lvl==='err'){
+      fin(d.msg,'<span class="badge n">Skipped</span>',true);
+    }else{
+      await tick();
+      try{
+        const r=await processFile(f,o);
+        if(r.skip){
+          fin(r.skip,'<span class="badge n">Skipped</span>',true);
+        }else{
+          outs.push(r);before+=f.size;after+=r.blob.size;
+          const pct=Math.round((1-r.blob.size/f.size)*100);
+          const url=URL.createObjectURL(r.blob);
+          const bd=r.resized
+            ?`<span class="badge n">${r.w}×${r.h}</span>`
+            :`<span class="badge ${pct>0?'':'n'}">${pct>0?'−'+pct+'%':'0%'}</span>`;
+          const pv=r.isImg?`<button class="pv-btn" data-u="${url}" data-n="${r.name.replace(/"/g,'')}" data-m="${fmt(f.size)} → ${fmt(r.blob.size)}">Preview</button>`:'';
+          fin(
+            `${fmt(f.size)} → ${fmt(r.blob.size)}${r.note?' · '+r.note:''}`,
+            `<div class="act-btns">${bd}${pv}<a class="dl" href="${url}" download="${r.name.replace(/"/g,'')}">Download</a></div>`,
+            Boolean(r.note)
+          );
+        }
+      }catch(err){
+        console.error(err);
+        fin('Processing failed for this file','<span class="badge n">Error</span>',true);
+      }
+    }
+    $('#ob').style.width=Math.round((i+1)/files.length*100)+'%';
+  }
+
+  box.querySelectorAll('.pv-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      $('#pvTitle').textContent=btn.dataset.n;
+      $('#pvImg').src=btn.dataset.u;
+      $('#pvMeta').textContent=btn.dataset.m;
+      $('#pvDl').href=btn.dataset.u;
+      $('#pvDl').download=btn.dataset.n;
+      $('#pvModal').classList.add('open');
+    };
+  });
+
+  $('#pt').textContent='Compression Complete';
+  if(outs.length){
+    const saved=before-after;
+    $('#sum').hidden=false;
+    $('#sum').textContent=saved>0
+      ?`Saved ${fmt(saved)} (${Math.round((saved/before)*100)}% reduction) · Final Total: ${fmt(after)}`
+      :`Complete · Final Output Size: ${fmt(after)}`;
+  }
+
+  $('#fin').hidden=false;
+  const all=$('#all');all.hidden=outs.length<2;
+  all.onclick=async()=>{
+    const z=new JSZip(),used={};
+    outs.forEach(r=>{
+      let n=r.name;
+      if(used[n])n=`(${used[n]++}) ${n}`;
+      else used[n]=1;
+      z.file(n,r.blob);
+    });
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(await z.generateAsync({type:'blob'}));
+    a.download='compressed-by-priyanto.zip';
+    a.click();
+  };
+}
+
+$('#pvClose').onclick=()=>$('#pvModal').classList.remove('open');
+$('#pvModal').onclick=e=>{if(e.target===$('#pvModal'))$('#pvModal').classList.remove('open')};
+</script>
+</body>
+</html>
