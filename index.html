@@ -43,6 +43,12 @@ body{
   -webkit-font-smoothing:antialiased;
   font-variant-numeric:tabular-nums;
 }
+body.no-scroll{
+  height:100dvh;
+  min-height:100dvh;
+  overflow:hidden;
+  padding:clamp(14px,3vh,26px) 16px clamp(16px,3vh,28px);
+}
 
 /* Crisp SVG Icons */
 .ico{
@@ -50,11 +56,11 @@ body{
   stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
   flex-shrink:0;display:inline-block;vertical-align:middle;
 }
-.ico-lg{width:32px;height:32px;stroke-width:1.65}
+.ico-lg{width:30px;height:30px;stroke-width:1.7}
 .ico-md{width:22px;height:22px;stroke-width:1.8}
 
 /* Stepper */
-.steps{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
+.steps{display:flex;gap:8px;margin-bottom:clamp(14px,2.8vh,28px);flex-wrap:wrap;justify-content:center;flex-shrink:0}
 .st{
   font-size:13px;font-weight:600;padding:7px 16px;border-radius:99px;
   background:var(--card);border:1px solid var(--line);color:var(--mut);
@@ -73,59 +79,81 @@ body{
 /* Views */
 .view{display:none;width:100%;max-width:650px;animation:fadeUp .35s ease}
 .view.on{display:block}
+#v1.on{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  flex:1;
+  min-height:0;
+}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* Hero / Page 1 */
-.brand-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--soft);color:var(--ac-dark);
-  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-  padding:5px 14px;border-radius:99px;margin:0 auto 14px;border:1px solid var(--line);
-}
 .center{text-align:center}
-h1{font-size:clamp(30px,6vw,42px);text-align:center;line-height:1.14;letter-spacing:-.025em;font-weight:800}
-h1 small{display:block;font-size:.42em;font-weight:700;color:var(--ac);margin-top:8px;letter-spacing:.01em}
-.sub{text-align:center;color:var(--mut);margin:12px auto 26px;font-size:15px;line-height:1.55;max-width:520px}
+h1{
+  font-size:clamp(28px,5.5vw,40px);
+  text-align:center;
+  line-height:1.12;
+  letter-spacing:-.025em;
+  font-weight:800;
+  margin-bottom:clamp(14px,2.8vh,24px);
+}
+h1 small{display:block;font-size:.42em;font-weight:700;color:var(--ac);margin-top:6px;letter-spacing:.01em}
 
 .drop{
-  display:block;border:2px dashed var(--ac2);background:var(--card);
-  border-radius:20px;padding:46px 24px;text-align:center;cursor:pointer;
-  transition:.22s;box-shadow:var(--shadow);
+  display:block;
+  width:100%;
+  border:2px dashed var(--ac2);
+  background:var(--card);
+  border-radius:20px;
+  padding:clamp(24px,4.8vh,44px) 22px;
+  text-align:center;
+  cursor:pointer;
+  transition:.22s;
+  box-shadow:var(--shadow);
 }
 .drop:hover,.drop.over{background:var(--soft2);border-color:var(--ac);transform:translateY(-2px)}
 .drop-icon{
-  width:58px;height:58px;border-radius:16px;background:var(--soft);color:var(--ac);
-  display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;
+  width:52px;height:52px;border-radius:15px;background:var(--soft);color:var(--ac);
+  display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;
 }
-.drop b{display:block;font-size:18px;margin-bottom:5px;font-weight:700}
-.drop span{color:var(--mut);font-size:14px}
-.formats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.drop b{display:block;font-size:18px;margin-bottom:4px;font-weight:700}
+.drop span{color:var(--mut);font-size:13.5px}
+.formats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 .formats span{
   font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:7px;
   background:var(--soft2);color:var(--mut);border:1px solid var(--line);letter-spacing:.02em;
 }
 .resume-pill{
-  display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  display:inline-flex;align-items:center;gap:8px;margin-top:14px;
   background:var(--card);border:1px solid var(--ac2);color:var(--ac-dark);
-  padding:9px 18px;border-radius:99px;font-size:13.5px;font-weight:600;
+  padding:8px 16px;border-radius:99px;font-size:13px;font-weight:600;
   cursor:pointer;box-shadow:0 4px 14px rgba(217,107,39,.1);transition:.2s;
 }
 .resume-pill:hover{background:var(--soft2)}
-.foot{
-  text-align:center;color:var(--mut);font-size:13px;margin-top:22px;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-}
-.studio-link-wrap{text-align:center;margin-top:16px}
+
+/* Explore More Projects CTA */
+.studio-link-wrap{text-align:center;margin-top:clamp(14px,2.8vh,22px);flex-shrink:0}
 .studio-link{
-  display:inline-flex;align-items:center;gap:7px;
-  background:var(--card);color:var(--ac-dark);
-  border:1px solid var(--line);padding:9px 18px;border-radius:99px;
-  font-size:13px;font-weight:700;text-decoration:none;
-  box-shadow:0 4px 12px rgba(43,29,18,.04);transition:.18s;
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--card);color:var(--ink);
+  border:1.5px solid var(--line);padding:10px 20px;border-radius:99px;
+  font-size:13.5px;font-weight:700;text-decoration:none;
+  box-shadow:0 6px 18px rgba(43,29,18,.06);transition:.18s;
+}
+.studio-link-ico{
+  width:26px;height:26px;border-radius:8px;
+  background:var(--soft);color:var(--ac);
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:.18s;
 }
 .studio-link:hover{
-  background:var(--soft2);border-color:var(--ac2);color:var(--ac);
-  transform:translateY(-1px);box-shadow:0 6px 16px rgba(217,107,39,.12);
+  background:var(--soft2);border-color:var(--ac);color:var(--ac-dark);
+  transform:translateY(-1px);box-shadow:0 8px 20px rgba(217,107,39,.14);
+}
+.studio-link:hover .studio-link-ico{
+  background:var(--ac);color:#fff;
 }
 
 /* Buttons */
@@ -417,7 +445,7 @@ select{flex:0 0 88px;cursor:pointer}
 .pv-meta{font-size:13px;color:var(--mut);margin-bottom:14px}
 </style>
 </head>
-<body>
+<body class="no-scroll">
 
 <div class="steps" id="stepper">
   <div class="st on" data-s="1"><span class="st-num">1</span> Upload</div>
@@ -425,19 +453,17 @@ select{flex:0 0 88px;cursor:pointer}
   <div class="st" data-s="3"><span class="st-num">3</span> Download</div>
 </div>
 
-<!-- PAGE 1: UPLOAD -->
+<!-- PAGE 1: UPLOAD (CLEAN, NON-SCROLLABLE) -->
 <section class="view on" id="v1">
-  <div class="center"><span class="brand-pill">Local Browser Compression</span></div>
   <h1>Compress Your Files<small>by Priyanto</small></h1>
-  <p class="sub">Reduce the file size of PDFs, PowerPoint presentations, Word documents, and images to your exact target — or resize photo dimensions accurately.</p>
 
   <label class="drop" id="drop">
     <input type="file" id="fi" multiple hidden>
     <div class="drop-icon">
       <svg class="ico ico-lg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </div>
-    <b>Select files to upload</b>
-    <span>or drag and drop files here · single or multiple files supported</span>
+    <b>Select or drop files</b>
+    <span>Single or multiple files supported</span>
     <div class="formats">
       <span>PDF</span>
       <span>PPTX / PPT</span>
@@ -454,14 +480,14 @@ select{flex:0 0 88px;cursor:pointer}
       <svg class="ico" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
   </div>
-  <p class="foot">
-    <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    <span>100% private — all processing happens locally in your browser.</span>
-  </p>
+
   <div class="studio-link-wrap">
     <a class="studio-link" href="https://project-showcase-4kt.pages.dev" target="_blank" rel="noopener">
-      <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
-      <span>Explore All Projects ↗</span>
+      <span class="studio-link-ico" aria-hidden="true">
+        <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      </span>
+      <span>Explore More Projects</span>
+      <svg class="ico" style="width:14px;height:14px;opacity:.75" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
     </a>
   </div>
 </section>
@@ -493,7 +519,7 @@ select{flex:0 0 88px;cursor:pointer}
 
 <!-- PAGE 3: PROCESSING & RESULTS -->
 <section class="view" id="v3">
-  <h1 style="font-size:28px" id="pt">Processing Files…</h1>
+  <h1 style="font-size:28px;margin-bottom:0" id="pt">Processing Files…</h1>
   <div class="ov"><div id="ob"></div></div>
   <div class="sum" id="sum" hidden></div>
   <div class="res" id="res"></div>
@@ -735,6 +761,7 @@ const IMGK=['jpeg','png','webp'],KN={jpeg:'JPG',png:'PNG',webp:'WebP'},MIME={jpe
 
 function show(n){
   step=n;
+  document.body.classList.toggle('no-scroll',n===1);
   document.querySelectorAll('.view').forEach((v,i)=>v.classList.toggle('on',i===n-1));
   document.querySelectorAll('.st').forEach((s,i)=>{
     s.classList.toggle('on',i===n-1);
